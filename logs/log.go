@@ -9,7 +9,7 @@ import (
 
 type item struct {
 	DirName    string
-	BackupTime string
+	BackupTime time.Time
 }
 
 type BackupLog []item // slice of item
@@ -18,7 +18,7 @@ func (p *BackupLog) Add(name string) {
 
 	backed := item{
 		DirName:    name,
-		BackupTime: time.Now().Format("2006-01-02 15:04:05"),
+		BackupTime: time.Now(),
 	}
 
 	*p = append(*p, backed)
@@ -27,7 +27,7 @@ func (p *BackupLog) Add(name string) {
 func (p *BackupLog) UpdateTime(name string) {
 	for i, v := range *p {
 		if v.DirName == name {
-			(*p)[i].BackupTime = time.Now().Format("2006-01-02 15:04:05")
+			(*p)[i].BackupTime = time.Now()
 		}
 	}
 }

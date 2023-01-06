@@ -5,13 +5,17 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/alexeyco/simpletable"
 	"github.com/razeenf/backup/logs"
 )
 
 func list(pwd string) {
+
+	var log logs.BackupLog
+	homeDir, _ := os.UserHomeDir()
+	logDir := filepath.Join(homeDir, ".config/gdrive/log.json")
+	log.Load(logDir)
 
 	table := simpletable.New()
 	table.Header = &simpletable.Header{
@@ -32,11 +36,6 @@ func list(pwd string) {
 			typee = "Folder"
 		}
 
-		var log logs.BackupLog
-		homeDir, _ := os.UserHomeDir()
-		logDir := filepath.Join(homeDir, ".config/gdrive/log.json")
-		log.Load(logDir)
-
 		abs, _ := filepath.Abs(file.Name())
 		fileInfo, _ := os.Stat(abs)
 
@@ -44,15 +43,15 @@ func list(pwd string) {
 		backupTime := ""
 
 		for _, v := range log {
-			timeString := v.BackupTime
-			BUT, _ := time.Parse("2006-01-02 03:04:05", timeString)
-
-			if strings.Contains(abs, v.DirName) && fileInfo.ModTime().Before(BUT) {
-				backedUp = fmt.Sprint(string("\033[32m"), "YES", string("\033[0m"))
-				backupTime = timeString
-			} else if strings.Contains(abs, v.DirName) && fileInfo.ModTime().After(BUT) {
-				backedUp = fmt.Sprint(string("\033[33m"), "NEW", string("\033[0m"))
-				backupTime = "Modified Since"
+			if strings.Contains(abs, v.DirName) {
+				if fileInfo.ModTime().Before(v.BackupTime) {
+					backedUp = fmt.Sprint(string("\033[32m"), "YES", string("\033[0m"))
+					backupTime = v.BackupTime.Format("2006-01-02 03:04:05")
+				} else if fileInfo.ModTime().After(v.BackupTime) {
+					backedUp = fmt.Sprint(string("\033[33m"), "NEW", string("\033[0m"))
+					backupTime = v.BackupTime.Format("2006-01-02 03:04:05")
+				}
+				break
 			}
 		}
 
