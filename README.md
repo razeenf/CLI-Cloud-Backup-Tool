@@ -1,4 +1,4 @@
-# CLI CLoud Backup Tool
+# CLI CLoud Backup Tool [DEPRECATED]
 
 A command-line interface program that allows you to easily back up your local files and folders to your Google Drive. It features a console UI that lists which folders and files are and aren't backed up, it also indicates if any files or folders have been modified since the last backup, making it easy to keep track of your backups and changes.
 
